@@ -3,8 +3,8 @@
 Встановлення:
 ```
 git clone https://github.com/vstrelnikof/edu-prj-01.git
-cd project
-python3 main.py
+cd edu-prj-01
+python main.py
 ```
 
 Використання:
