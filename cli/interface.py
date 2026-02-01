@@ -2,46 +2,102 @@ from managers.address_book import AddressBook
 from managers.notes_manager import NotesManager
 from difflib import get_close_matches
 
-# Словник команд та їхніх псевдонімів
-COMMAND_ALIASES = {
-    "add_contact": ["додати контакт", "новий контакт", "створити контакт"],
-    "list_contacts": ["показати контакти", "всі контакти", "список контактів"],
-    "search_contact": ["знайти контакт", "пошук контакту"],
-    "edit_contact": ["редагувати контакт", "змінити контакт"],
-    "delete_contact": ["видалити контакт", "стерти контакт"],
-    "birthdays": ["дні народження", "показати дні народження"],
-    "add_note": ["додати нотатку", "нова нотатка"],
-    "list_notes": ["показати нотатки", "всі нотатки", "список нотаток"],
-    "search_note": ["знайти нотатку", "пошук нотатки"],
-    "edit_note": ["редагувати нотатку", "змінити нотатку"],
-    "delete_note": ["видалити нотатку", "стерти нотатку"],
-    "exit": ["вихід", "завершити", "quit", "exit"]
-}
-
-def guess_command(user_input: str) -> str | None:
-    # Вгадує найближчу команду на основі введеного тексту.
-    all_keywords = {alias: cmd for cmd, aliases in COMMAND_ALIASES.items() for alias in aliases}
-    matches = get_close_matches(user_input.lower(), all_keywords.keys(), n=1, cutoff=0.5)
-    if matches:
-        return all_keywords[matches[0]]
-    return None
-
-
 class CLI:
     def __init__(self):
         self.address_book = AddressBook()
         self.notes_manager = NotesManager()
 
-    def run(self):
+        # Єдиний словник конфігурації команд
+        self.COMMANDS = {
+            "add_contact": {
+                "aliases": ["додати контакт", "новий контакт", "створити контакт"],
+                "handler": self.address_book.add_contact,
+                "description": "Додати новий контакт"
+            },
+            "list_contacts": {
+                "aliases": ["показати контакти", "всі контакти", "список контактів"],
+                "handler": self.address_book.list_contacts,
+                "description": "Показати всі контакти"
+            },
+            "search_contact": {
+                "aliases": ["знайти контакт", "пошук контакту"],
+                "handler": self.address_book.search_contact,
+                "description": "Пошук контакту"
+            },
+            "edit_contact": {
+                "aliases": ["редагувати контакт", "змінити контакт"],
+                "handler": self.address_book.edit_contact,
+                "description": "Редагувати контакт"
+            },
+            "delete_contact": {
+                "aliases": ["видалити контакт", "стерти контакт"],
+                "handler": self.address_book.delete_contact,
+                "description": "Видалити контакт"
+            },
+            "birthdays": {
+                "aliases": ["дні народження", "показати дні народження"],
+                "handler": self.address_book.upcoming_birthdays,
+                "description": "Показати дні народження"
+            },
+            "add_note": {
+                "aliases": ["додати нотатку", "нова нотатка"],
+                "handler": self.notes_manager.add_note,
+                "description": "Додати нову нотатку"
+            },
+            "list_notes": {
+                "aliases": ["показати нотатки", "всі нотатки", "список нотаток"],
+                "handler": self.notes_manager.list_notes,
+                "description": "Показати всі нотатки"
+            },
+            "search_note": {
+                "aliases": ["знайти нотатку", "пошук нотатки"],
+                "handler": self.notes_manager.search_note,
+                "description": "Пошук нотатки"
+            },
+            "edit_note": {
+                "aliases": ["редагувати нотатку", "змінити нотатку"],
+                "handler": self.notes_manager.edit_note,
+                "description": "Редагувати нотатку"
+            },
+            "delete_note": {
+                "aliases": ["видалити нотатку", "стерти нотатку"],
+                "handler": self.notes_manager.delete_note,
+                "description": "Видалити нотатку"
+            },
+            "exit": {
+                "aliases": ["вихід", "завершити", "quit", "exit"],
+                "handler": self._exit,
+                "description": "Вихід з програми"
+            }
+        }
+
+    def _exit(self):
+        print("👋 До зустрічі!")
+        raise SystemExit
+
+    def _guess_command(self, user_input: str) -> str | None:
+        # Вгадує найближчу команду на основі введеного тексту.
+        all_keywords = {alias: cmd for cmd, cfg in self.COMMANDS.items() for alias in cfg["aliases"]}
+        matches = get_close_matches(user_input.lower(), all_keywords.keys(), n=1, cutoff=0.5)
+        if matches:
+            return all_keywords[matches[0]]
+        return None
+
+    def _print_help(self):
         print("=== Персональний помічник ===")
-        print("Команди: add_contact, list_contacts, search_contact, edit_contact, delete_contact, birthdays, add_note, list_notes, search_note, edit_note, delete_note, exit")
+        print("Доступні команди:")
+        for cmd, cfg in self.COMMANDS.items():
+            print(f"  {cmd:<15} – {cfg['description']}")
+
+    def run(self):
+        self._print_help()
 
         while True:
             command = input("\nВведіть команду: ").strip().lower()
 
-            # Якщо користувач ввів псевдонім або довільний текст
-            if command not in COMMAND_ALIASES.keys():
-                suggestion = guess_command(command)
+            # Якщо команда не знайдена напряму — пробуємо вгадати
+            if command not in self.COMMANDS:
+                suggestion = self._guess_command(command)
                 if suggestion:
                     print(f"🤔 Можливо ви мали на увазі: {suggestion}")
                     command = suggestion
@@ -49,20 +105,10 @@ class CLI:
                     print("❌ Невідома команда. Спробуйте ще раз.")
                     continue
 
-            # Виконання команд через match-case
-            match command:
-                case "add_contact": self.address_book.add_contact()
-                case "list_contacts": self.address_book.list_contacts()
-                case "search_contact": self.address_book.search_contact()
-                case "edit_contact": self.address_book.edit_contact()
-                case "delete_contact": self.address_book.delete_contact()
-                case "birthdays": self.address_book.upcoming_birthdays()
-                case "add_note": self.notes_manager.add_note()
-                case "list_notes": self.notes_manager.list_notes()
-                case "search_note": self.notes_manager.search_note()
-                case "edit_note": self.notes_manager.edit_note()
-                case "delete_note": self.notes_manager.delete_note()
-                case "exit":
-                    print("👋 До зустрічі!")
-                    break
-                case _: print("❌ Невідома команда")
+            # Виконання команди через handler
+            try:
+                self.COMMANDS[command]["handler"]()
+            except SystemExit:
+                break
+            except Exception as e:
+                print(f"❌ Помилка: {e}")
