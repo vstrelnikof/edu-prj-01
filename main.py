@@ -22,13 +22,15 @@ def demo(screen: Screen, state: AppState):
     # Створюємо екземпляри вікон
     scenes: list[Scene] = SceneManager.createScenes({
         SceneType.MAIN: DashboardView(screen, state),
-        SceneType.ADD_CONTACT: ContactForm(screen, state),
-        SceneType.LIST_CONTACTS: ContactListView(screen, state),
-        SceneType.ADD_NOTE: NoteForm(screen, state),
-        SceneType.LIST_NOTES: NoteListView(screen, state),
+        SceneType.CONTACT_FORM: ContactForm(screen, state),
+        SceneType.CONTACTS_LIST: ContactListView(screen, state),
+        SceneType.NOTE_FORM: NoteForm(screen, state),
+        SceneType.NOTES_LIST: NoteListView(screen, state),
     })
     # Використовуємо палітру кольорів
-    screen.play(scenes, stop_on_resize=True, repeat=True)
+    screen.play(scenes, 
+                stop_on_resize=True,
+                repeat=True)
 
 if __name__ == "__main__":
     logging.info("Starting personal assistant...")

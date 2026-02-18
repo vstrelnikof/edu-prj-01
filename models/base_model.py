@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
+from uuid import UUID, uuid4
 
 class BaseModel(ABC):
-    """Базова модель з універсальною валідацією."""
+    id: UUID = uuid4()
 
+    """Базова модель з універсальною валідацією."""
     @abstractmethod
-    def validate(self):
+    def validate(self) -> dict:
         """Метод для перевірки даних моделі."""
         pass
 
-    def __post_init__(self):
-        self.validate()

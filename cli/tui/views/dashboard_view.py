@@ -1,13 +1,14 @@
 from cli.tui.base_element import BaseElement
 from utils.state import AppState
 from datetime import datetime
+from asciimatics.screen import Screen
 from asciimatics.event import KeyboardEvent
 from asciimatics.widgets import Layout, Label, Divider, ListBox, Button, VerticalDivider
 from asciimatics.exceptions import NextScene, StopApplication
 from cli.tui.scene_type import SceneType
 
 class DashboardView(BaseElement):
-    def __init__(self, screen, state: AppState):
+    def __init__(self, screen: Screen, state: AppState) -> None:
         super().__init__(screen, state, title="📊 Personal Assistant")
 
         # --- Верхня секція: Статистика ---
@@ -31,7 +32,7 @@ class DashboardView(BaseElement):
         # Ліва колонка: Дні народження
         main_layout.add_widget(Label("🎂 НАЙБЛИЖЧІ ДНІ НАРОДЖЕННЯ:"), 0)
         main_layout.add_widget(Divider(draw_line=False), 0)
-        bdays = self._state.get_upcoming_birthdays()
+        bdays = self._state.address_book_manager.get_upcoming_birthdays()
         for b in bdays:
             main_layout.add_widget(Label(f"  • {b}"), 0)
 
@@ -40,11 +41,10 @@ class DashboardView(BaseElement):
         main_layout.add_widget(Divider(draw_line=False), 1)
 
         options = [
-            ("➕ Додати новий контакт", SceneType.ADD_CONTACT),
-            ("📋 Показати всі контакти", SceneType.LIST_CONTACTS),
-            ("🎂 Дні народження", SceneType.LIST_BIRTHDAYS),
-            ("📔 Нотатки (в розробці)", SceneType.LIST_NOTES),
-            ("❌ Вихід", 0)
+            ("👥 Контакти", SceneType.CONTACTS_LIST),
+            ("🎂 Дні народження", SceneType.BIRTHDAYS_LIST),
+            ("📝 Нотатки", SceneType.NOTES_LIST),
+            ("❌ Вихід (Q)", 0)
         ]
         
         self._list = ListBox(len(options), options,
@@ -59,14 +59,14 @@ class DashboardView(BaseElement):
         
         self.fix()
     
-    def process_event(self, event):
+    def process_event(self, event) -> None:
         if isinstance(event, KeyboardEvent):
-            if event.key_code in self.exit_key_codes:
+            if event.key_code in self._exit_key_codes:
                 raise StopApplication("User quit via key code")
         
         return super().process_event(event)
 
-    def _on_click(self):
+    def _on_click(self) -> None:
         sceneOrExit = self._list.value
 
         if sceneOrExit == 0:
