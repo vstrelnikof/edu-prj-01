@@ -1,7 +1,7 @@
 from asciimatics.exceptions import NextScene
 from asciimatics.scene import Scene
 
-class SceneManager:
+class SceneFactory:
     @staticmethod
     def next(name: str):
         raise NextScene(name)
