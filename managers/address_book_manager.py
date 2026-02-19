@@ -12,21 +12,13 @@ class AddressBookManager:
 
     @log_action
     def add_contact(self, data: dict) -> None:
-        new_contact = Contact(name=data["name"],
-                              phone=data["phone"],
-                              email=data["email"],
-                              address=data["address"],
-                              birthday=data["birthday"])
+        new_contact = self.__get_contact_from_dict(data)
         self.contacts.append(new_contact)
         self.save()
     
     @log_action
     def edit_contact(self, index: int, data: dict) -> None:
-        self.contacts[index] = Contact(name=data["name"],
-                                       phone=data["phone"],
-                                       email=data["email"],
-                                       address=data["address"],
-                                       birthday=data["birthday"])
+        self.contacts[index] = self.__get_contact_from_dict(data)
         self.save()
 
     @log_action
@@ -53,3 +45,12 @@ class AddressBookManager:
     def _reload(self):
         self.storage = StorageManager("contacts.json")
         self.contacts = [Contact(**c) for c in self.storage.load()]
+    
+    def __get_contact_from_dict(self, data: dict):
+        birthday = data["birthday"]
+        birthday = datetime.strptime(birthday, "%Y-%m-%d") if birthday else birthday
+        return Contact(name=data["name"],
+                       phone=data["phone"],
+                       email=data["email"],
+                       address=data["address"],
+                       birthday=birthday.date().isoformat())

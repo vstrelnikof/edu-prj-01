@@ -23,7 +23,7 @@ class ContactForm(BaseForm):
         layout.add_widget(Label("Формат телефону: +380XXXXXXXXX"))
         layout.add_widget(Label("Формат дати:     YYYY-MM-DD"))
 
-        layout.add_widget(Divider(draw_line=False))
+        layout.add_widget(Divider())
 
         layout.add_widget(Text("Ім'я*:", "name"))
         layout.add_widget(Text("Телефон:", "phone", validator=lambda phone_string:
@@ -33,6 +33,8 @@ class ContactForm(BaseForm):
         layout.add_widget(Text("Адреса:", "address"))
         layout.add_widget(Text("День народження:", "birthday", validator=lambda date_string:
                                not date_string or Validator.validate_date(date_string)))
+
+        layout.add_widget(Divider())
     
     def reset(self) -> None:
         super().reset()

@@ -1,3 +1,4 @@
+from datetime import datetime
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox
@@ -31,11 +32,13 @@ class ContactListView(BaseView):
         for i, contact in enumerate(self._state.address_book_manager.contacts):
             for _, contact_field_value in vars(contact).items():
                 if search_term in contact_field_value.lower():
+                    birthday = datetime.strptime(contact.birthday, "%Y-%m-%d").date().isoformat() \
+                               if contact.birthday else contact.birthday
                     filtered_data.append(([contact.name,
                                            contact.phone,
                                            contact.email,
                                            contact.address,
-                                           contact.birthday], i))
+                                           birthday], i))
                     break
         
         self._list_box.options = filtered_data
