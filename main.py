@@ -1,5 +1,5 @@
 import logging
-from managers.scene_manager import SceneManager
+from factories.scene_factory import SceneFactory
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.scene import Scene
@@ -21,7 +21,7 @@ app_state = AppState()
 
 def demo(screen: Screen, state: AppState):
     # Створюємо екземпляри вікон
-    scenes: list[Scene] = SceneManager.createScenes({
+    scenes: list[Scene] = SceneFactory.createScenes({
         SceneType.MAIN: DashboardView(screen, state),
         SceneType.CONTACT_FORM: ContactForm(screen, state),
         SceneType.CONTACTS_LIST: ContactListView(screen, state),

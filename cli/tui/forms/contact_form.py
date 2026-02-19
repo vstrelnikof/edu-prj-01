@@ -7,7 +7,7 @@ from asciimatics.exceptions import NextScene
 from asciimatics.widgets import Layout, Text, PopUpDialog, Label, Divider
 from cli.tui.forms.base_form import BaseForm
 from cli.tui.scene_type import SceneType
-from managers.scene_manager import SceneManager
+from factories.scene_factory import SceneFactory
 
 class ContactForm(BaseForm):
     _esc_key_path: str = SceneType.CONTACTS_LIST
@@ -56,7 +56,7 @@ class ContactForm(BaseForm):
     
     def _handle_saved(self):
         super().reset()
-        SceneManager.next(SceneType.CONTACTS_LIST)
+        SceneFactory.next(SceneType.CONTACTS_LIST)
 
     def _ok(self):
         assert self.scene is not None

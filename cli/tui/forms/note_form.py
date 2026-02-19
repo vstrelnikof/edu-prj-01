@@ -6,7 +6,7 @@ from asciimatics.exceptions import NextScene
 from asciimatics.widgets import Layout, Text, TextBox, PopUpDialog, Label, Divider
 from cli.tui.forms.base_form import BaseForm
 from cli.tui.scene_type import SceneType
-from managers.scene_manager import SceneManager
+from factories.scene_factory import SceneFactory
 
 class NoteForm(BaseForm):
     _esc_key_path: str = SceneType.NOTES_LIST
@@ -44,7 +44,7 @@ class NoteForm(BaseForm):
     
     def _handle_saved(self):
         super().reset()
-        SceneManager.next(SceneType.NOTES_LIST)
+        SceneFactory.next(SceneType.NOTES_LIST)
 
     def _ok(self):
         assert self.scene is not None
