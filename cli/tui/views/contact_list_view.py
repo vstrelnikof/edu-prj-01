@@ -1,4 +1,3 @@
-from datetime import datetime
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox
@@ -7,6 +6,10 @@ from cli.tui.views.base_view import BaseView
 from cli.tui.scene_type import SceneType
 
 class ContactListView(BaseView):
+    _is_create_enabled: bool = True
+    _is_update_enabled: bool = True
+    _is_delete_enabled: bool = True
+
     def __init__(self, screen: Screen, state: AppState):
         super().__init__(screen, state, 
                          title="🔍 Пошук та Управління Контактами")
@@ -14,34 +17,22 @@ class ContactListView(BaseView):
     def _render_content(self) -> None:
         list_layout = Layout([1], fill_frame=True)
         self.add_layout(list_layout)
-        
         self._list_box = MultiColumnListBox(
             name="contact_list",
             height=self.screen.height - 5,
             columns=["<25%", "<20%", "<20%", "<20%", "<15%"],
             titles=["👤 Ім'я", "📱 Телефон", "📧 Email", "🏠 Адреса", "🎂 Дата"],
             options=[], # Спочатку порожній, заповниться в _filter_list
+            on_select=self._on_edit
         )
         list_layout.add_widget(self._list_box)
 
     def _filter_list(self):
         """Фільтрація списку контактів на основі тексту в пошуку."""
-        search_term = self._search_box.value.lower() if self._search_box.value else ""
-        
-        filtered_data = []
-        for i, contact in enumerate(self._state.address_book_manager.contacts):
-            for _, contact_field_value in vars(contact).items():
-                if search_term in contact_field_value.lower():
-                    birthday = datetime.strptime(contact.birthday, "%Y-%m-%d").date().isoformat() \
-                               if contact.birthday else contact.birthday
-                    filtered_data.append(([contact.name,
-                                           contact.phone,
-                                           contact.email,
-                                           contact.address,
-                                           birthday], i))
-                    break
-        
-        self._list_box.options = filtered_data
+        search_term = self._search_box.value.lower() \
+            if self._search_box.value else ""
+        self._list_box.options = self._state.address_book_manager \
+            .get_contacts_table_data(search_term)
     
     def _on_create(self) -> None:
         super()._on_create()
@@ -55,9 +46,7 @@ class ContactListView(BaseView):
         # selected_button_idx == 0 відповідає кнопці "Так"
         if selected_button_idx == 0:
             index = self._list_box.value
-
             if (index is None):
                 raise ValueError("selected_button_idx is None")
-
             self._state.address_book_manager.delete_contact(index)
             self._filter_list() # Оновлюємо таблицю

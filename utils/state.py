@@ -1,14 +1,14 @@
-from managers.address_book_manager import AddressBookManager
-from managers.notes_manager import NotesManager
+from services.address_book_service import AddressBookService
+from services.notes_service import NotesService
 
 class AppState:
-    edit_index: (int | None) = None
-
     """Об'єкт стану, що зберігає всі менеджери та глобальні налаштування."""
+    edit_index: int | None = None
+
     def __init__(self) -> None:
         self.tui_theme = "bright" # default/monochrome/green/bright
-        self.address_book_manager = AddressBookManager()
-        self.notes_manager = NotesManager()
+        self.address_book_manager = AddressBookService()
+        self.notes_manager = NotesService()
 
     def get_stats(self) -> dict[str, int]:
         return {

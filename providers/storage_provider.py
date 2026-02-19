@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Generator
 
-class StorageManager:
+class StorageProvider:
     def __init__(self, filename: str) -> None:
         self.file = Path("data") / filename
         self.file.parent.mkdir(exist_ok=True)

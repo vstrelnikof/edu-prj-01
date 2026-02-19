@@ -9,6 +9,7 @@ from cli.tui.forms.note_form import NoteForm
 from cli.tui.views.dashboard_view import DashboardView
 from cli.tui.views.contact_list_view import ContactListView
 from cli.tui.views.note_list_view import NoteListView
+from cli.tui.views.birthday_list_view import BirthdayListView
 
 logging.basicConfig(filename="assistant.log",
                     level=logging.DEBUG,
@@ -24,6 +25,7 @@ def demo(screen: Screen, state: AppState):
         SceneType.MAIN: DashboardView(screen, state),
         SceneType.CONTACT_FORM: ContactForm(screen, state),
         SceneType.CONTACTS_LIST: ContactListView(screen, state),
+        SceneType.BIRTHDAYS_LIST: BirthdayListView(screen, state),
         SceneType.NOTE_FORM: NoteForm(screen, state),
         SceneType.NOTES_LIST: NoteListView(screen, state),
     })

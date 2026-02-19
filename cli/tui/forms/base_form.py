@@ -8,7 +8,7 @@ from cli.tui.scene_type import SceneType
 
 class BaseForm(BaseElement):
     _required_fields: list[str] = []
-    _edit_index: (int | None) = None
+    _edit_index: int | None = None
 
     def __init__(self, screen: Screen, state: AppState, **kwargs) -> None:
         super().__init__(screen, state,
@@ -41,7 +41,7 @@ class BaseForm(BaseElement):
 
         errors: list[str] = []
         for field_name, _ in self.data.items():
-            widget: (Widget | None) = self.find_widget(field_name)
+            widget: Widget | None = self.find_widget(field_name)
 
             if not widget:
                 continue
@@ -59,13 +59,15 @@ class BaseForm(BaseElement):
             )
 
         return not errors_exists
-
-    def _ok(self) -> None:
+    
+    def _clear_edit(self):
         self._edit_index = None
         self._state.edit_index = None
+
+    def _ok(self) -> None:
+        self._clear_edit()
         self.save()
 
     def _cancel(self) -> None:
-        self._edit_index = None
-        self._state.edit_index = None
+        self._clear_edit()
         raise NextScene(SceneType.MAIN)

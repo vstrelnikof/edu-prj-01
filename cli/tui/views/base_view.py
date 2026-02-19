@@ -8,23 +8,30 @@ from cli.tui.scene_type import SceneType
 
 class BaseView(BaseElement):
     _list_box: MultiColumnListBox
+    _is_search_enabled: bool = True
+    _is_create_enabled: bool = False
+    _is_update_enabled: bool = False
+    _is_delete_enabled: bool = False
     
     def __init__(self, screen: Screen, state: AppState, **kwargs) -> None:
         super().__init__(screen, state, has_border=True, **kwargs)
-        search_layout = Layout([1, 10, 1])
-        self.add_layout(search_layout)
-        # on_change викликає метод filter_list при кожному символі
-        self._search_box = Text("🔎 Пошук: ", name="search", on_change=self._filter_list)
-        search_layout.add_widget(self._search_box, 1)
+        if self._is_search_enabled:
+            search_layout = Layout([1, 10, 1])
+            self.add_layout(search_layout)
+            self._search_box = Text("🔎 Пошук: ", name="search", on_change=self._filter_list)
+            search_layout.add_widget(self._search_box, 1)
         self._render_content()
         layout = Layout([1])
         self.add_layout(layout)
         layout.add_widget(Divider())
         button_layout = Layout([1, 1, 1, 1])
         self.add_layout(button_layout)
-        button_layout.add_widget(Button("Створити", self._on_create), 0)
-        button_layout.add_widget(Button("Редагувати", self._on_edit), 1)
-        button_layout.add_widget(Button("Видалити", self._on_delete), 2)
+        if self._is_create_enabled:
+          button_layout.add_widget(Button("Створити", self._on_create), 0)
+        if self._is_update_enabled:
+          button_layout.add_widget(Button("Редагувати", self._on_edit), 1)
+        if self._is_delete_enabled:
+          button_layout.add_widget(Button("Видалити", self._on_delete), 2)
         button_layout.add_widget(Button("Назад (ESC)", self._on_back), 3)
         self.fix()
     
@@ -60,7 +67,6 @@ class BaseView(BaseElement):
             )
         )
     
-    @abstractmethod
     def _confirm_delete(self, selected_button_idx) -> None:
         pass
 

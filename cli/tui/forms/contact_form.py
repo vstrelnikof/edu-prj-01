@@ -3,6 +3,7 @@ from models.contact import Contact
 from utils.state import AppState
 from utils.validator import Validator
 from asciimatics.screen import Screen
+from asciimatics.exceptions import NextScene
 from asciimatics.widgets import Layout, Text, PopUpDialog, Label, Divider
 from cli.tui.forms.base_form import BaseForm
 from cli.tui.scene_type import SceneType
@@ -52,6 +53,10 @@ class ContactForm(BaseForm):
             self.data = {
                 "name": "", "phone": "", "email": "", "address": "", "birthday": ""
             }
+    
+    def _handle_saved(self):
+        super().reset()
+        SceneManager.next(SceneType.CONTACTS_LIST)
 
     def _ok(self):
         assert self.scene is not None
@@ -70,14 +75,14 @@ class ContactForm(BaseForm):
                                               ["Чудово"], 
                                               on_close=lambda _: self._handle_saved())
             )
-            self._edit_index = None
-            self._state.edit_index = None
+            self._clear_edit()
         except ValueError as e:
             logging.error(e)
             self.scene.add_effect(
                 PopUpDialog(self._screen, f"❌ Помилка: {str(e)}", ["Спробувати ще раз"])
             )
+    
+    def _cancel(self) -> None:
+        self._clear_edit()
+        raise NextScene(SceneType.CONTACTS_LIST)
 
-    def _handle_saved(self):
-        super().reset()
-        SceneManager.next(SceneType.CONTACTS_LIST)

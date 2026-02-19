@@ -1,37 +1,76 @@
-from asciimatics.widgets import Frame, Layout, Text, Button, TextBox
+import logging
+from models.note import Note
+from utils.state import AppState
+from asciimatics.screen import Screen
 from asciimatics.exceptions import NextScene
-
+from asciimatics.widgets import Layout, Text, TextBox, PopUpDialog, Label, Divider
+from cli.tui.forms.base_form import BaseForm
 from cli.tui.scene_type import SceneType
+from managers.scene_manager import SceneManager
 
-class NoteForm(Frame):
-    def __init__(self, screen, manager):
-        super().__init__(screen, screen.height // 2, screen.width // 2,
-                         hover_focus=True, title="📝 Нова нотатка")
-        self._manager = manager
-        self.set_theme("bright")
+class NoteForm(BaseForm):
+    _esc_key_path: str = SceneType.NOTES_LIST
 
+    def __init__(self, screen: Screen, state: AppState):
+        super().__init__(screen, state, can_scroll=False)
+    
+    def _render_content(self) -> None:
+        self._required_fields = ["name"]
+        
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
-        # TextBox для багаторядкового тексту
-        layout.add_widget(TextBox(5, label="Текст:", name="text", as_string=True))
-        layout.add_widget(Text("Теги (через кому):", name="tags"))
+        layout.add_widget(Label("Формат тегів: список через кому"))
 
-        layout2 = Layout([1, 1])
-        self.add_layout(layout2)
-        layout2.add_widget(Button("Зберегти", self._ok), 0)
-        layout2.add_widget(Button("Скасувати", self._cancel), 1)
-        self.fix()
+        layout.add_widget(Divider())
+
+        layout.add_widget(TextBox(10, label="Текст:", name="text", as_string=True))
+        layout.add_widget(Text("Теги:", name="tags"))
+
+        layout.add_widget(Divider())
+    
+    def reset(self) -> None:
+        super().reset()
+        self.title = "📝 Нова нотатка" if self._state.edit_index is None else "📝 Редагування нотатки"
+        if self._edit_index is not None:
+            note: Note = self._state.notes_manager.notes[self._edit_index]
+            self.data = {
+                "text": note.text,
+                "tags": note.tags_string
+            }
+        else:
+            self.data = {
+                "text": "", "tags": ""
+            }
+    
+    def _handle_saved(self):
+        super().reset()
+        SceneManager.next(SceneType.NOTES_LIST)
 
     def _ok(self):
-        if not self.data: return
-        
+        assert self.scene is not None
         self.save()
-        # Перетворюємо рядок тегів у список
-        if isinstance(self.data["tags"], str):
-            self.data["tags"] = [t.strip() for t in self.data["tags"].split(",") if t.strip()]
-        
-        self._manager.add_note_from_dict(self.data)
-        raise NextScene(SceneType.MAIN)
 
-    def _cancel(self):
-        raise NextScene(SceneType.MAIN)
+        if not self.data or not self._validate_form():
+            return
+
+        try:
+            if self._edit_index is None:
+                self._state.notes_manager.add_note(self.data)
+            else:
+                self._state.notes_manager.edit_note(self._edit_index, self.data)
+            self.scene.add_effect(PopUpDialog(self._screen,
+                                              "✅ Нотатку успішно збережено!",
+                                              ["Чудово"], 
+                                              on_close=lambda _: self._handle_saved())
+            )
+            self._clear_edit()
+        except ValueError as e:
+            logging.error(e)
+            self.scene.add_effect(
+                PopUpDialog(self._screen, f"❌ Помилка: {str(e)}", ["Спробувати ще раз"])
+            )
+    
+    def _cancel(self) -> None:
+        self._clear_edit()
+        raise NextScene(SceneType.NOTES_LIST)
+
