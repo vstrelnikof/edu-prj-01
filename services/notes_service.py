@@ -36,7 +36,8 @@ class NotesService(BaseService):
     def get_notes_table_data(self, search_term: str) -> list:
         table_data: list = []
         for i, note in enumerate(self.notes):
-            is_relevant: bool = any([tag for tag in note.tags if search_term in tag.lower()])
+            is_relevant: bool = search_term in note.text.lower() or \
+                any([tag for tag in note.tags if search_term in tag.lower()])
             if not is_relevant:
                 continue
             note_text: str = note.text.replace('\n', ' ')

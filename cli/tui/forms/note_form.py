@@ -24,6 +24,9 @@ class NoteForm(BaseForm):
         layout.add_widget(Divider())
 
         layout.add_widget(TextBox(10, label="Текст:", name="text", as_string=True))
+
+        layout.add_widget(Divider())
+        
         layout.add_widget(Text("Теги:", name="tags"))
 
         layout.add_widget(Divider())
