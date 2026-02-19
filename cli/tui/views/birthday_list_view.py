@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox, Text

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from decorators.log_decorator import log_action
 from models.note import Note
 from providers.storage_provider import StorageProvider
