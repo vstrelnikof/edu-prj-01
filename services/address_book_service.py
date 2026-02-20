@@ -1,15 +1,14 @@
 from collections import namedtuple
 from datetime import date, datetime
+from typing import final
 from decorators.log_decorator import log_action
 from models.contact import Contact
-from providers.storage_provider import StorageProvider
+from models.contact_birthday import ContactBirthday
 from services.base_service import BaseService
 
+@final
 class AddressBookService(BaseService):
     contacts: list[Contact]
-
-    def __init__(self) -> None:
-        self._reload()
 
     def find_contact_by_id(self, id: str) -> (Contact | None):
         return next((contact for contact in self.contacts if contact.id == id), None)
@@ -35,7 +34,7 @@ class AddressBookService(BaseService):
         self.contacts.pop(index)
         self.save()
     
-    def get_contacts_table_data(self, search_term: str) -> list:
+    def get_contacts_table_data(self, search_term: str) -> list[tuple[list[str], int]]:
         table_data: list[tuple[list[str], int]] = []
         for i, contact in enumerate(self.contacts):
             is_relevant: bool = any([contact for _, contact_field_value in vars(contact).items()
@@ -52,7 +51,7 @@ class AddressBookService(BaseService):
             table_data.append(table_row)
         return table_data
     
-    def get_birthdays_table_data(self, days: int) -> list:
+    def get_birthdays_table_data(self, days: int) -> list[tuple[list[str], int]]:
         table_data: list[tuple[list[str], int]] = []
         today: date = datetime.now().date()
         for i, contact in enumerate(self.contacts):
@@ -69,7 +68,6 @@ class AddressBookService(BaseService):
         return table_data
 
     def get_dashboard_birthdays(self) -> list[str]:
-        ContactBirthday = namedtuple('ContactBirthday', ['birthday_date', 'contact'])
         upcoming_contacts: list[ContactBirthday] = []
         for contact in self.contacts:
             next_birthday_date: date | None = contact.get_next_birthday_date()
@@ -80,25 +78,18 @@ class AddressBookService(BaseService):
             if upcoming_contacts else ["На найближчий тиждень іменинників немає"]
     
     def is_birthday_soon(self, next_birthday_date: date, days: int, today: datetime | date = datetime.now().date()) -> bool:
-        # Рахуємо різницю в днях
         days_until: int = (next_birthday_date - today).days
         return 0 <= days_until <= days
     
-    @log_action
     def save(self) -> None:
         self.storage.save([c.__dict__ for c in self.contacts])
 
-    @log_action
-    def _reload(self) -> None:
-        self.storage = StorageProvider("contacts.json")
+    def reload(self) -> None:
         self.contacts = [Contact(**c) for c in self.storage.load()]
     
     def __get_contact_from_dict(self, data: dict) -> Contact:
-        birthday = data["birthday"]
-        birthday = datetime.strptime(birthday, "%Y-%m-%d").date().isoformat() \
-            if birthday else birthday
-        return Contact(name=data["name"],
-                       phone=data["phone"],
-                       email=data["email"],
-                       address=data["address"],
-                       birthday=birthday)
+        return Contact(**{
+            k: (datetime.strptime(v, "%Y-%m-%d").date().isoformat()
+                if k == "birthday" and v else v)
+            for k, v in data.items()
+        })

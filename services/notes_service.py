@@ -1,14 +1,12 @@
+from typing import final
 from decorators.log_decorator import log_action
 from models.note import Note
-from providers.storage_provider import StorageProvider
 from services.base_service import BaseService
 
+@final
 class NotesService(BaseService):
     notes: list[Note]
 
-    def __init__(self) -> None:
-        self._reload()
-    
     def find_note_by_id(self, id: str) -> (Note | None):
         return next((note for note in self.notes if note.id == id), None)
 
@@ -48,13 +46,10 @@ class NotesService(BaseService):
         table_data.sort(key=lambda row: row[1], reverse=sort_desc)
         return table_data
 
-    @log_action
     def save(self) -> None:
         self.storage.save([n.__dict__ for n in self.notes])
     
-    @log_action
-    def _reload(self) -> None:
-        self.storage = StorageProvider("notes.json")
+    def reload(self) -> None:
         self.notes = [Note(**n) for n in self.storage.load()]
     
     def __get_note_from_dict(self, data: dict) -> Note:

@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from datetime import date, datetime
+from typing import final
 from helpers.date_helpers import replace_date_year
 from models.base_model import BaseModel
 from utils.validator import Validator
 
+@final
 @dataclass
 class Contact(BaseModel):
     name: str
@@ -19,7 +21,7 @@ class Contact(BaseModel):
         contact_birthday: datetime = datetime.strptime(self.birthday, "%Y-%m-%d")
         return contact_birthday.date()
 
-    def validate(self) -> dict:
+    def _validate(self) -> dict:
         return {
             "name": not self.name,
             "phone": not self.phone or Validator.validate_phone(self.phone),
@@ -28,6 +30,7 @@ class Contact(BaseModel):
         }
     
     def get_next_birthday_date(self, today: datetime | date = datetime.now().date()) -> (date | None):
+        """Повертає дату наступного Дня Народження Контакту"""
         contact_birthday: date | None = self.birthday_date
         if not contact_birthday:
             return None

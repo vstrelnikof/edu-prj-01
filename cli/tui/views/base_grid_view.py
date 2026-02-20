@@ -1,12 +1,15 @@
+from factories.scene_factory import SceneFactory
 from utils.state import AppState
 from abc import abstractmethod
-from cli.tui.base_element import BaseElement
+from cli.tui.base_frame import BaseFrame
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox, Button, Divider, Text, PopUpDialog
 from asciimatics.exceptions import NextScene
 from cli.tui.scene_type import SceneType
 
-class BaseView(BaseElement):
+class BaseGridView(BaseFrame):
+    """Архі-клас для реалізації вікон із таблицею, елементами управління та пошуком"""
+
     _list_box: MultiColumnListBox
     _is_search_enabled: bool = True
     _is_create_enabled: bool = False
@@ -37,11 +40,12 @@ class BaseView(BaseElement):
     
     @abstractmethod
     def _render_content(self) -> None:
+        """Абстрактний метод, реалізація якого має будувати розмітку основного блоку вікна"""
         pass
 
     @abstractmethod
     def _filter_list(self) -> None:
-        """Фільтрація на основі тексту в пошуку."""
+        """Абстрактний метод для реалізації фільтрації на основі тексту в пошуку"""
         pass
     
     def _on_create(self) -> None:
@@ -57,7 +61,6 @@ class BaseView(BaseElement):
         assert self.scene is not None
         if self._list_box.value is None:
             return
-        # Створюємо діалог підтвердження
         self.scene.add_effect(
             PopUpDialog(
                 self._screen, 
@@ -71,9 +74,9 @@ class BaseView(BaseElement):
         pass
 
     def _on_back(self) -> None:
-        raise NextScene(SceneType.MAIN)
+        SceneFactory.next(SceneType.MAIN)
     
     def reset(self):
-        # Цей метод викликається автоматично щоразу при переході на цю сцену!
+        """Метод Frame. Викликається автоматично щоразу при переході на сцену."""
         super().reset()
         self._filter_list()

@@ -1,8 +1,10 @@
 import json
 from pathlib import Path
-from typing import Generator
+from typing import Any, Generator
 
 class StorageProvider:
+    """Провайдер сховища (поки тільки JSON)"""
+
     def __init__(self, filename: str) -> None:
         self.file = Path("data") / filename
         self.file.parent.mkdir(exist_ok=True)
@@ -10,12 +12,13 @@ class StorageProvider:
             self.save([])
 
     def load(self) -> Generator:
-        """Генератор для построчного читання JSON."""
+        """Генератор для построчного читання JSON файлу"""
         with self.file.open("r", encoding="utf-8") as f:
             data = json.load(f)
             for item in data:
                 yield item
 
-    def save(self, data) -> None:
+    def save(self, data: Any) -> None:
+        """Збереження будь якої структури в JSON файл"""
         with self.file.open("w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)

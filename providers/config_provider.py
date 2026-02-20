@@ -4,8 +4,11 @@ from pathlib import Path
 from models.app_config import AppConfig
 
 class ConfigProvider:
+    """Провайдер конфігурації застосунку через файл"""
+
     @staticmethod
     def load() -> (AppConfig | None):
+        """Фабричний метод який читає конфігурацію із файлу та ініціалізує @AppConfig"""
         config_path = Path("config.yaml")
         if not config_path.exists():
             return None

@@ -75,5 +75,5 @@ class NoteForm(BaseForm):
     
     def _cancel(self) -> None:
         self._clear_edit()
-        raise NextScene(SceneType.NOTES_LIST)
+        SceneFactory.next(SceneType.NOTES_LIST)
 

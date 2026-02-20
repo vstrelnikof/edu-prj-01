@@ -1,4 +1,5 @@
-from cli.tui.base_element import BaseElement
+from cli.tui.base_frame import BaseFrame
+from factories.scene_factory import SceneFactory
 from utils.state import AppState
 from datetime import datetime
 from asciimatics.screen import Screen
@@ -7,7 +8,7 @@ from asciimatics.widgets import Layout, Label, Divider, ListBox, Button, TextBox
 from asciimatics.exceptions import NextScene, StopApplication
 from cli.tui.scene_type import SceneType
 
-class DashboardView(BaseElement):
+class DashboardView(BaseFrame):
     _birthdays: list[str]
 
     def __init__(self, screen: Screen, state: AppState) -> None:
@@ -90,4 +91,4 @@ class DashboardView(BaseElement):
             raise StopApplication("User quit via menu")
         if not sceneOrExit:
             return
-        raise NextScene(sceneOrExit)
+        SceneFactory.next(sceneOrExit)

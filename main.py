@@ -13,18 +13,21 @@ from cli.tui.views.contact_list_view import ContactListView
 from cli.tui.views.note_list_view import NoteListView
 from cli.tui.views.birthday_list_view import BirthdayListView
 
+"""Конфігурація застосунку через відповідний провайдер"""
 app_config: AppConfig | None = ConfigProvider.load()
 
+"""Конфігурація логування у файл"""
 logging.basicConfig(filename="assistant.log",
                     level=app_config.log_level if app_config else logging.INFO,
                     filemode="w",
                     datefmt="%Y-%m-%d %H:%M:%S",
                     format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s")
 
+"""Контейнер стану застосунку"""
 app_state = AppState(app_config)
 
 def demo(screen: Screen, state: AppState):
-    # Створюємо екземпляри вікон
+    """Ініціалізатор asciimatics"""
     scenes: list[Scene] = SceneFactory.createScenes({
         SceneType.MAIN: DashboardView(screen, state),
         SceneType.CONTACT_FORM: ContactForm(screen, state),
@@ -33,7 +36,6 @@ def demo(screen: Screen, state: AppState):
         SceneType.NOTE_FORM: NoteForm(screen, state),
         SceneType.NOTES_LIST: NoteListView(screen, state),
     })
-    # Використовуємо палітру кольорів
     screen.play(scenes, 
                 stop_on_resize=True,
                 repeat=True)

@@ -84,5 +84,5 @@ class ContactForm(BaseForm):
     
     def _cancel(self) -> None:
         self._clear_edit()
-        raise NextScene(SceneType.CONTACTS_LIST)
+        SceneFactory.next(SceneType.CONTACTS_LIST)
 

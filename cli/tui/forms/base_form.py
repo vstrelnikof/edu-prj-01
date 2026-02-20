@@ -1,12 +1,15 @@
+from factories.scene_factory import SceneFactory
 from utils.state import AppState
 from abc import abstractmethod
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, Button, PopUpDialog, Divider, Widget
 from asciimatics.exceptions import NextScene
-from cli.tui.base_element import BaseElement
+from cli.tui.base_frame import BaseFrame
 from cli.tui.scene_type import SceneType
 
-class BaseForm(BaseElement):
+class BaseForm(BaseFrame):
+    """Архі-клас для реалізації модальних вікон із формою та елементами управління"""
+
     _required_fields: list[str] = []
     _edit_index: int | None = None
 
@@ -29,9 +32,11 @@ class BaseForm(BaseElement):
 
     @abstractmethod
     def _render_content(self) -> None:
+        """Абстрактний метод, реалізація якого має будувати розмітку основного блоку вікна"""
         pass
 
     def reset(self) -> None:
+        """Метод Frame. Викликається автоматично щоразу при переході на сцену."""
         super().reset()
         self._edit_index = self._state.edit_index
 
@@ -70,4 +75,4 @@ class BaseForm(BaseElement):
 
     def _cancel(self) -> None:
         self._clear_edit()
-        raise NextScene(SceneType.MAIN)
+        SceneFactory.next(SceneType.MAIN)

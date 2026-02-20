@@ -1,11 +1,11 @@
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox, Text
-from cli.tui.views.base_view import BaseView
+from cli.tui.views.base_grid_view import BaseGridView
 from utils.utils import days_left_in_year
 from utils.validator import Validator
 
-class BirthdayListView(BaseView):
+class BirthdayListView(BaseGridView):
     _is_search_enabled = False
 
     def __init__(self, screen: Screen, state: AppState):

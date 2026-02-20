@@ -1,11 +1,12 @@
-from cli.tui.views.base_view import BaseView
+from cli.tui.views.base_grid_view import BaseGridView
+from factories.scene_factory import SceneFactory
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox, Text, CheckBox
 from asciimatics.exceptions import NextScene
 from cli.tui.scene_type import SceneType
 
-class NoteListView(BaseView):
+class NoteListView(BaseGridView):
     _is_search_enabled: bool = False
     _is_create_enabled: bool = True
     _is_update_enabled: bool = True
@@ -43,11 +44,11 @@ class NoteListView(BaseView):
     
     def _on_create(self) -> None:
         super()._on_create()
-        raise NextScene(SceneType.NOTE_FORM)
+        SceneFactory.next(SceneType.NOTE_FORM)
     
     def _on_edit(self) -> None:
         super()._on_edit()
-        raise NextScene(SceneType.NOTE_FORM)
+        SceneFactory.next(SceneType.NOTE_FORM)
 
     def _confirm_delete(self, selected_button_idx):
         # selected_button_idx == 0 відповідає кнопці "Так"

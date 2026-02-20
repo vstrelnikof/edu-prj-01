@@ -5,12 +5,14 @@ from asciimatics.widgets import Frame
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 
-class BaseElement(Frame):
+class BaseFrame(Frame):
+    """Архі-клас для реалізації вікон"""
     _exit_key_codes: list[int] = [ord('q'), ord('Q'), ord('й'), ord('Й')]
     _esc_key_path: str = SceneType.MAIN
 
     def __init__(self, screen: Screen, state: AppState, **kwargs) -> None:
-        """Словник для перекриття"""
+        # Словник використовується для перекриття значень на кожному
+        # рівні наслідування
         super().__init__(**{
             "screen": screen,
             "height": screen.height,
@@ -23,6 +25,7 @@ class BaseElement(Frame):
         self.set_theme(state.tui_theme)
 
     def process_event(self, event) -> None:
+        """Глобальний обробник подій із периферійних пристроїв"""
         if isinstance(event, KeyboardEvent):
             if event.key_code == -1:
                 self._edit_index = None

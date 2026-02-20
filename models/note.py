@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
+from typing import final
 from models.base_model import BaseModel
 
+@final
 @dataclass
 class Note(BaseModel):
     text: str
@@ -10,7 +12,7 @@ class Note(BaseModel):
     def tags_string(self) -> str:
         return ', '.join(self.tags)
     
-    def validate(self) -> dict:
+    def _validate(self) -> dict:
         return {
             "text": not self.text,
         }

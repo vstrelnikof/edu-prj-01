@@ -1,6 +1,10 @@
 import re
+from typing import final
 
+@final
 class Validator:
+    """Утилітний клас, містить різноманітні методи валідації"""
+
     @staticmethod
     def validate_phone(phone: str) -> bool:
         return re.match(r"^\+380\d{9}$", phone) is not None
