@@ -36,6 +36,6 @@ class BirthdayListView(BaseView):
     def _filter_list(self):
         """Фільтрація списку днів народження на основі вводу."""
         days_to_show: int | None = int(self._search_box.value) \
-            if self._search_box.value else days_left_in_year()
+            if self._search_box.value.isnumeric() else days_left_in_year()
         self._list_box.options = self._state.address_book_manager \
             .get_birthdays_table_data(days_to_show)
