@@ -33,17 +33,19 @@ class NotesService(BaseService):
         self.notes.pop(index)
         self.save()
     
-    def get_notes_table_data(self, search_term: str) -> list:
-        table_data: list = []
+    def get_notes_table_data(self, search_term: str, sort_desc: bool = False) -> list:
+        table_data: list[tuple[list[str], int]] = []
         for i, note in enumerate(self.notes):
             is_relevant: bool = search_term in note.text.lower() or \
                 any([tag for tag in note.tags if search_term in tag.lower()])
             if not is_relevant:
                 continue
             note_text: str = note.text.replace('\n', ' ')
-            table_data.append(([(note_text[:60] + '...')
-                                if len(note_text) > 60 else note_text,
-                                note.tags_string], i))
+            table_row: tuple[list[str], int] = ([(note_text[:60] + '...')
+                if len(note_text) > 60 else note_text,
+                note.tags_string], i)
+            table_data.append(table_row)
+        table_data.sort(key=lambda row: row[1], reverse=sort_desc)
         return table_data
 
     @log_action

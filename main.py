@@ -1,5 +1,7 @@
 import logging
 from factories.scene_factory import SceneFactory
+from models.app_config import AppConfig
+from providers.config_provider import ConfigProvider
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.scene import Scene
@@ -11,13 +13,15 @@ from cli.tui.views.contact_list_view import ContactListView
 from cli.tui.views.note_list_view import NoteListView
 from cli.tui.views.birthday_list_view import BirthdayListView
 
+app_config: AppConfig | None = ConfigProvider.load()
+
 logging.basicConfig(filename="assistant.log",
-                    level=logging.DEBUG,
+                    level=app_config.log_level if app_config else logging.INFO,
                     filemode="w",
                     datefmt="%Y-%m-%d %H:%M:%S",
                     format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s")
 
-app_state = AppState()
+app_state = AppState(app_config)
 
 def demo(screen: Screen, state: AppState):
     # Створюємо екземпляри вікон

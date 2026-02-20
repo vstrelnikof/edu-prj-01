@@ -1,11 +1,12 @@
 from cli.tui.views.base_view import BaseView
 from utils.state import AppState
 from asciimatics.screen import Screen
-from asciimatics.widgets import Layout, MultiColumnListBox
+from asciimatics.widgets import Layout, MultiColumnListBox, Text, CheckBox
 from asciimatics.exceptions import NextScene
 from cli.tui.scene_type import SceneType
 
 class NoteListView(BaseView):
+    _is_search_enabled: bool = False
     _is_create_enabled: bool = True
     _is_update_enabled: bool = True
     _is_delete_enabled: bool = True
@@ -14,6 +15,12 @@ class NoteListView(BaseView):
         super().__init__(screen, state, title="📓 Ваші нотатки")
 
     def _render_content(self) -> None:
+        search_layout = Layout([1, 6, 2, 1])
+        self.add_layout(search_layout)
+        self._search_box = Text("🔎 Пошук: ", name="search", on_change=self._filter_list)
+        search_layout.add_widget(self._search_box, 1)
+        self._sort_check_box = CheckBox(" ↕", name="sort", on_change=self._filter_list)
+        search_layout.add_widget(self._sort_check_box, 2)
         list_layout = Layout([1], fill_frame=True)
         self.add_layout(list_layout)
         self._list_box = MultiColumnListBox(
@@ -27,11 +34,12 @@ class NoteListView(BaseView):
         list_layout.add_widget(self._list_box)
 
     def _filter_list(self):
-        """Фільтрація списку нотаток на основі тексту в пошуку."""
+        """Фільтрація та сортування списку нотаток на основі тексту в пошуку."""
         search_term = self._search_box.value.lower() \
             if self._search_box.value else ""
+        is_sort_checked: bool = self._sort_check_box.value
         self._list_box.options = self._state.notes_manager \
-            .get_notes_table_data(search_term)
+            .get_notes_table_data(search_term, is_sort_checked)
     
     def _on_create(self) -> None:
         super()._on_create()

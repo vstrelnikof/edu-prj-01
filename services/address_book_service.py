@@ -36,33 +36,35 @@ class AddressBookService(BaseService):
         self.save()
     
     def get_contacts_table_data(self, search_term: str) -> list:
-        table_data: list = []
+        table_data: list[tuple[list[str], int]] = []
         for i, contact in enumerate(self.contacts):
             is_relevant: bool = any([contact for _, contact_field_value in vars(contact).items()
                                      if search_term in contact_field_value.lower()])
             if not is_relevant:
                 continue
             birthday_date: date | None = contact.birthday_date
-            birthday = birthday_date.isoformat() if birthday_date else ""
-            table_data.append(([contact.name,
-                                contact.phone,
-                                contact.email,
-                                contact.address,
-                                birthday], i))
+            birthday: str = birthday_date.isoformat() if birthday_date else ""
+            table_row: tuple[list[str], int] = ([contact.name,
+                                                 contact.phone,
+                                                 contact.email,
+                                                 contact.address,
+                                                 birthday], i)
+            table_data.append(table_row)
         return table_data
     
     def get_birthdays_table_data(self, days: int) -> list:
-        table_data: list = []
+        table_data: list[tuple[list[str], int]] = []
         today: date = datetime.now().date()
         for i, contact in enumerate(self.contacts):
             birthday_date: date | None = contact.get_next_birthday_date(today)
             if not birthday_date or not self.is_birthday_soon(birthday_date, days, today):
                 continue
-            table_data.append(([birthday_date.isoformat(),
-                                contact.phone,
-                                contact.email,
-                                contact.address,
-                                contact.name], i))
+            table_row: tuple[list[str], int] = ([birthday_date.isoformat(),
+                                                 contact.phone,
+                                                 contact.email,
+                                                 contact.address,
+                                                 contact.name], i)
+            table_data.append(table_row)
         table_data.sort(key=lambda table_row: table_row[0][0])
         return table_data
 
