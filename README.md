@@ -2,8 +2,8 @@
 
 Встановлення:
 ```
-git clone https://github.com/vstrelnikof/goit-pycore-hw-03.git
-cd goit-pycore-hw-03
+git clone https://github.com/vstrelnikof/goit-pycore-hw-final.git
+cd goit-pycore-hw-final
 python -m venv .venv
 ./.venv/Scripts/activate # Per OS
 python -m pip install -r requirements.txt
