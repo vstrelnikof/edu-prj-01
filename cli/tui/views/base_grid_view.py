@@ -4,7 +4,6 @@ from abc import abstractmethod
 from cli.tui.base_frame import BaseFrame
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox, Button, Divider, Text, PopUpDialog
-from asciimatics.exceptions import NextScene
 from cli.tui.scene_type import SceneType
 
 class BaseGridView(BaseFrame):

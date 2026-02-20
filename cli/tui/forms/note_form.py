@@ -2,7 +2,6 @@ import logging
 from models.note import Note
 from utils.state import AppState
 from asciimatics.screen import Screen
-from asciimatics.exceptions import NextScene
 from asciimatics.widgets import Layout, Text, TextBox, PopUpDialog, Label, Divider
 from cli.tui.forms.base_form import BaseForm
 from cli.tui.scene_type import SceneType

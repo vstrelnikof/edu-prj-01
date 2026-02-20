@@ -3,7 +3,6 @@ from models.contact import Contact
 from utils.state import AppState
 from utils.validator import Validator
 from asciimatics.screen import Screen
-from asciimatics.exceptions import NextScene
 from asciimatics.widgets import Layout, Text, PopUpDialog, Label, Divider
 from cli.tui.forms.base_form import BaseForm
 from cli.tui.scene_type import SceneType

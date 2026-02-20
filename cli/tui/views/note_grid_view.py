@@ -3,7 +3,6 @@ from factories.scene_factory import SceneFactory
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox, Text, CheckBox
-from asciimatics.exceptions import NextScene
 from cli.tui.scene_type import SceneType
 
 class NoteGridView(BaseGridView):
