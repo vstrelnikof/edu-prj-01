@@ -9,7 +9,7 @@ from cli.tui.scene_type import SceneType
 from factories.scene_factory import SceneFactory
 
 class NoteForm(BaseForm):
-    _esc_key_path: str = SceneType.NOTES_LIST
+    _esc_key_path: str = SceneType.NOTES_GRID
 
     def __init__(self, screen: Screen, state: AppState):
         super().__init__(screen, state, can_scroll=False)
@@ -47,7 +47,7 @@ class NoteForm(BaseForm):
     
     def _handle_saved(self):
         super().reset()
-        SceneFactory.next(SceneType.NOTES_LIST)
+        SceneFactory.next(SceneType.NOTES_GRID)
 
     def _ok(self):
         assert self.scene is not None
@@ -75,5 +75,5 @@ class NoteForm(BaseForm):
     
     def _cancel(self) -> None:
         self._clear_edit()
-        SceneFactory.next(SceneType.NOTES_LIST)
+        SceneFactory.next(SceneType.NOTES_GRID)
 

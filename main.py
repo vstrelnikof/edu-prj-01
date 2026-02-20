@@ -9,9 +9,9 @@ from cli.tui.scene_type import SceneType
 from cli.tui.forms.contact_form import ContactForm
 from cli.tui.forms.note_form import NoteForm
 from cli.tui.views.dashboard_view import DashboardView
-from cli.tui.views.contact_list_view import ContactListView
-from cli.tui.views.note_list_view import NoteListView
-from cli.tui.views.birthday_list_view import BirthdayListView
+from cli.tui.views.contact_grid_view import ContactGridView
+from cli.tui.views.note_grid_view import NoteGridView
+from cli.tui.views.birthday_grid_view import BirthdayGridView
 
 """Конфігурація застосунку через відповідний провайдер"""
 app_config: AppConfig | None = ConfigProvider.load()
@@ -31,10 +31,10 @@ def demo(screen: Screen, state: AppState):
     scenes: list[Scene] = SceneFactory.createScenes({
         SceneType.MAIN: DashboardView(screen, state),
         SceneType.CONTACT_FORM: ContactForm(screen, state),
-        SceneType.CONTACTS_LIST: ContactListView(screen, state),
-        SceneType.BIRTHDAYS_LIST: BirthdayListView(screen, state),
+        SceneType.CONTACTS_GRID: ContactGridView(screen, state),
+        SceneType.BIRTHDAYS_GRID: BirthdayGridView(screen, state),
         SceneType.NOTE_FORM: NoteForm(screen, state),
-        SceneType.NOTES_LIST: NoteListView(screen, state),
+        SceneType.NOTES_GRID: NoteGridView(screen, state),
     })
     screen.play(scenes, 
                 stop_on_resize=True,

@@ -49,9 +49,9 @@ class DashboardView(BaseFrame):
         main_layout.add_widget(Divider(draw_line=False), 1)
 
         menu_list_box_options = [
-            ("👥 Контакти", SceneType.CONTACTS_LIST),
-            ("🎂 Дні народження", SceneType.BIRTHDAYS_LIST),
-            ("📝 Нотатки", SceneType.NOTES_LIST),
+            ("👥 Контакти", SceneType.CONTACTS_GRID),
+            ("🎂 Дні народження", SceneType.BIRTHDAYS_GRID),
+            ("📝 Нотатки", SceneType.NOTES_GRID),
             ("", ""),
             ("❌ Вихід (Q)", 0)
         ]

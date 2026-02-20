@@ -5,7 +5,7 @@ from cli.tui.views.base_grid_view import BaseGridView
 from utils.utils import days_left_in_year
 from utils.validator import Validator
 
-class BirthdayListView(BaseGridView):
+class BirthdayGridView(BaseGridView):
     _is_search_enabled = False
 
     def __init__(self, screen: Screen, state: AppState):
