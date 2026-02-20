@@ -10,4 +10,4 @@ app:
   log_level: 20
   tui:
     # default/monochrome/green/bright
-    theme: "green"
+    theme: "default"
